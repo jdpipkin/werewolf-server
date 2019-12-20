@@ -2,8 +2,8 @@
 require('dotenv').config()
 const express = require('express')
 const request = require('request')
-const redis = require('redis')
 
+const polls = require('./src/polls')
 const validateRequest = require('./src/validateRequest')
 
 // Store our app's ID and Secret. These we got from Step 1.
@@ -12,11 +12,6 @@ const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
 // Instantiates Express and assigns our app variable to it
-const store = redis.createClient()
-store.on('connect', () => {
-  console.log('store connected')
-})
-
 const app = express()
 
 app.use(
@@ -75,16 +70,26 @@ app.get('/oauth', (req, res) => {
 })
 
 // Route the endpoint that our slash command will point to and send back a simple response to indicate that ngrok is working
-app.post('/werewolf', validateRequest, (req, res) => {
+app.post('/werewolf', validateRequest, async (req, res) => {
   const { user_id: userId, channel_id: channelId, text } = req.body
 
   const splitText = text.split(' ')
   const command = splitText.shift()
-  const options = splitText.join(' ')
+  const optionsString = splitText.join(' ')
 
   let message = {}
   switch (command) {
     case 'poll':
+      const newPoll = await polls.create({channelId, optionsString})
+      if(typeof newPoll !== 'string') {
+          message = {
+              text: JSON.stringify(newPoll)
+          }
+      } else {
+          message = {
+              text: newPoll
+          }
+      }
       // create poll in channel
       break
     case 'results':
