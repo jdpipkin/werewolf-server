@@ -26,7 +26,7 @@ app.use(
 )
 
 // Again, we define a port we want to listen to
-const PORT = 4390
+const PORT = process.env.PORT || 4390
 
 // Lets start our server
 app.listen(PORT, () => {
@@ -123,13 +123,13 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.privateResponse({
-            text: polls.publicResponse({ poll: result.results }),
+            blocks: polls.formatPollDisplay({ poll: result.results }),
           })
       // delete poll
       break
     default:
       message = slackResponses.errorResponse(new Error('Unknown command'))
   }
-  console.log(message)
+
   if (message) return res.status(200).json(message)
 })
