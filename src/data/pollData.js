@@ -1,5 +1,6 @@
 const fs = require('fs').promises
 const safeReturn = require('./../safeReturn')
+
 const findPoll = async ({ channelId }) => {
   try {
     const file = await fs.readFile(`./db/${channelId}.json`)
@@ -22,7 +23,7 @@ const savePoll = async ({ channelId, data }) => {
 
 const deletePoll = async ({ channelId }) => {
   try {
-    await fs.unlink(`./db/${channelId}`)
+    await fs.unlink(`./db/${channelId}.json`)
     return safeReturn(null, true)
   } catch (error) {
     console.error(error)

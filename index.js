@@ -106,15 +106,15 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.privateResponse({
-            text: result.results,
+            text: 'Your vote has been recorded!',
           })
       break
     case 'unvote':
-      result = await polls.unvote({ channelId, userId })
+      result = await votes.unvote({ channelId, userId })
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.privateResponse({
-            text: polls.formatPollDisplay({ poll: result.results }),
+            text: 'Your vote has been removed!',
           })
       // remove my vote
       break

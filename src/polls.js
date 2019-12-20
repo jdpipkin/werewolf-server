@@ -2,17 +2,7 @@ const pollData = require('./data/pollData')
 const safeReturn = require('./safeReturn')
 const blockBuilder = require('./blockBuilder')
 
-const formatPollDisplay = ({ poll }) => {
-  return [
-    blockBuilder.titleBlock({ title: poll.title }),
-    blockBuilder.divider(),
-    ...Object.keys(poll.options).flatMap(optionKey =>
-      blockBuilder.optionBlock({ option: poll.options[optionKey], optionKey })
-    ),
-  ]
-}
-
-const createOptionsObject = ({ options }) =>
+const _createOptionsObject = ({ options }) =>
   options.reduce((accum, curr, currentIndex) => {
     accum[currentIndex + 1] = {
       text: curr,
@@ -21,7 +11,7 @@ const createOptionsObject = ({ options }) =>
     return accum
   }, {})
 
-const parseOptions = ({ optionsString }) => {
+const _parseOptions = ({ optionsString }) => {
   const splitText = optionsString.split('”')
 
   if (splitText.length !== 2) {
@@ -42,37 +32,14 @@ const parseOptions = ({ optionsString }) => {
   return safeReturn(null, { title, options })
 }
 
-const create = async ({ channelId, optionsString }) => {
-  if (!channelId) {
-    return safeReturn(new Error('channelId is required'))
-  }
-
-  const pollResult = await pollData.findPoll({ channelId })
-
-  if (pollResult.results !== null) {
-    return safeReturn(new Error('Poll already exists for this channel'))
-  }
-
-  const parsedResults = parseOptions({ optionsString })
-
-  if (parsedResults.error) {
-    return safeReturn(parsedResults.error)
-  }
-  const { title, options } = parsedResults.results
-
-  const poll = {
-    channelId,
-    title,
-    options: createOptionsObject({ options }),
-  }
-
-  const saveResult = await pollData.savePoll({ channelId, data: poll })
-
-  if (saveResult.error) {
-    return safeReturn(new Error('Something went wrong saving poll'))
-  }
-
-  return safeReturn(null, poll)
+const formatPollDisplay = ({ poll }) => {
+  return [
+    blockBuilder.titleBlock({ title: poll.title }),
+    blockBuilder.divider(),
+    ...Object.keys(poll.options).flatMap(optionKey =>
+      blockBuilder.optionBlock({ option: poll.options[optionKey], optionKey })
+    ),
+  ]
 }
 
 const find = async ({ channelId }) => {
@@ -89,7 +56,54 @@ const find = async ({ channelId }) => {
   return safeReturn(null, pollResult.results)
 }
 
-const close = () => {}
+const create = async ({ channelId, optionsString }) => {
+  if (!channelId) {
+    return safeReturn(new Error('channelId is required'))
+  }
+
+  const pollResult = await pollData.findPoll({ channelId })
+
+  if (pollResult.results !== null) {
+    return safeReturn(new Error('Poll already exists for this channel'))
+  }
+
+  const parsedResults = _parseOptions({ optionsString })
+
+  if (parsedResults.error) {
+    return safeReturn(parsedResults.error)
+  }
+  const { title, options } = parsedResults.results
+
+  const poll = {
+    channelId,
+    title,
+    options: _createOptionsObject({ options }),
+  }
+
+  const saveResult = await pollData.savePoll({ channelId, data: poll })
+
+  if (saveResult.error) {
+    return safeReturn(new Error('Something went wrong saving poll'))
+  }
+
+  return safeReturn(null, poll)
+}
+
+const close = async ({ channelId }) => {
+  const pollResult = find({ channelId })
+
+  if (pollResult.error) {
+    return pollResult
+  }
+
+  const deleteResult = await pollData.deletePoll({ channelId })
+
+  if (deleteResult.error) {
+    return safeReturn(new Error('There was an issue closing this poll'))
+  }
+
+  return pollResult
+}
 
 module.exports = {
   create,
