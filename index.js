@@ -4,7 +4,9 @@ const express = require('express')
 const request = require('request')
 
 const polls = require('./src/polls')
+const slackResponses = require('./src/slackResponses')
 const validateRequest = require('./src/validateRequest')
+const votes = require('./src/votes')
 
 // Store our app's ID and Secret. These we got from Step 1.
 // For this tutorial, we'll keep your API credentials right here. But for an actual app, you'll want to  store them securely in environment variables.
@@ -78,38 +80,56 @@ app.post('/werewolf', validateRequest, async (req, res) => {
   const optionsString = splitText.join(' ')
 
   let message = {}
+  let result = {}
   switch (command) {
     case 'poll':
-      const newPoll = await polls.create({channelId, optionsString})
-      if(typeof newPoll !== 'string') {
-          message = {
-              text: JSON.stringify(newPoll)
-          }
-      } else {
-          message = {
-              text: newPoll
-          }
-      }
+      result = await polls.create({ channelId, optionsString })
+
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.publicResponse({
+            text: polls.formatPollDisplay({ poll: result.results }),
+          })
       // create poll in channel
       break
     case 'results':
+      result = await polls.find({ channelId })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            text: polls.formatPollDisplay({ poll: result.results }),
+          })
       // format results and return
       break
     case 'vote':
-      // add a vote to a number
+      result = await votes.vote({ channelId, userId, optionsString })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            text: polls.formatPollDisplay({ poll: result.results }),
+          })
       break
     case 'unvote':
+      result = await polls.unvote({ channelId, userId })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            text: polls.formatPollDisplay({ poll: result.results }),
+          })
       // remove my vote
       break
     case 'close':
+      result = await polls.close({ channelId })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            text: polls.publicResponse({ poll: result.results }),
+          })
       // delete poll
       break
     default:
-      message = {
-        response_type: 'ephemeral',
-        delete_original: 'true',
-        text: 'Error: Unknown Command',
-      }
+      message = slackResponses.errorResponse(new Error('Unknown command'))
   }
-  return res.status(200).json(message)
+
+  if (message) return res.status(200).json(message)
 })
