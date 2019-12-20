@@ -1,5 +1,55 @@
 const poll = require('./polls')
 const pollData = require('./data/pollData')
+const blockBuilder = require('./blockBuilder')
+describe('formatPoll', () => {
+  it('should return a poll formatted into blocks', () => {
+    // arrange
+    jest
+      .spyOn(blockBuilder, 'titleBlock')
+      .mockImplementation(({ title }) => ({ title }))
+
+    jest
+      .spyOn(blockBuilder, 'divider')
+      .mockImplementation(() => ({ divider: 'here' }))
+
+    jest
+      .spyOn(blockBuilder, 'optionBlock')
+      .mockImplementation(({ option, optionKey }) => [
+        { key: optionKey },
+        { elements: option.votes },
+      ])
+
+    const expected = [
+      { title: 'Hello World' },
+      { divider: 'here' },
+      { key: '1' },
+      { elements: ['Vote 1', 'Vote 2'] },
+      { key: '2' },
+      { elements: ['Vote 3', 'Vote 4'] },
+    ]
+
+    const mockPoll = {
+      channelId: '12345',
+      title: 'Hello World',
+      options: {
+        1: {
+          text: 'Option 1',
+          votes: ['Vote 1', 'Vote 2'],
+        },
+        2: {
+          text: 'Option 2',
+          votes: ['Vote 3', 'Vote 4'],
+        },
+      },
+    }
+
+    // act
+    const actual = poll.formatPollDisplay({ poll: mockPoll })
+
+    // assert
+    expect(actual).toEqual(expected)
+  })
+})
 
 describe('createPoll', () => {
   afterEach(() => {

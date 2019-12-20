@@ -88,7 +88,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.publicResponse({
-            text: polls.formatPollDisplay({ poll: result.results }),
+            blocks: polls.formatPollDisplay({ poll: result.results }),
           })
       // create poll in channel
       break
@@ -97,7 +97,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.privateResponse({
-            text: polls.formatPollDisplay({ poll: result.results }),
+            blocks: polls.formatPollDisplay({ poll: result.results }),
           })
       // format results and return
       break
@@ -106,7 +106,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.privateResponse({
-            text: polls.formatPollDisplay({ poll: result.results }),
+            text: result.results,
           })
       break
     case 'unvote':
@@ -130,6 +130,6 @@ app.post('/werewolf', validateRequest, async (req, res) => {
     default:
       message = slackResponses.errorResponse(new Error('Unknown command'))
   }
-
+  console.log(message)
   if (message) return res.status(200).json(message)
 })

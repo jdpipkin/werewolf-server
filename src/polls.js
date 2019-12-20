@@ -1,7 +1,16 @@
 const pollData = require('./data/pollData')
 const safeReturn = require('./safeReturn')
+const blockBuilder = require('./blockBuilder')
 
-const formatPollDisplay = ({ poll }) => poll
+const formatPollDisplay = ({ poll }) => {
+  return [
+    blockBuilder.titleBlock({ title: poll.title }),
+    blockBuilder.divider(),
+    ...Object.keys(poll.options).flatMap(optionKey =>
+      blockBuilder.optionBlock({ option: poll.options[optionKey], optionKey })
+    ),
+  ]
+}
 
 const createOptionsObject = ({ options }) =>
   options.reduce((accum, curr, currentIndex) => {
@@ -39,7 +48,7 @@ const create = async ({ channelId, optionsString }) => {
   }
 
   const pollResult = await pollData.findPoll({ channelId })
-  console.log(pollResult)
+
   if (pollResult.results !== null) {
     return safeReturn(new Error('Poll already exists for this channel'))
   }
@@ -66,10 +75,25 @@ const create = async ({ channelId, optionsString }) => {
   return safeReturn(null, poll)
 }
 
+const find = async ({ channelId }) => {
+  if (!channelId) {
+    return safeReturn(new Error('channelId is required'))
+  }
+
+  const pollResult = await pollData.findPoll({ channelId })
+
+  if (pollResult.error !== null) {
+    return safeReturn(new Error('No poll exists for this channel.'))
+  }
+
+  return safeReturn(null, pollResult.results)
+}
+
 const close = () => {}
 
 module.exports = {
   create,
+  find,
   formatPollDisplay,
   close,
 }

@@ -1,11 +1,13 @@
-const publicResponse = ({ text }) => ({
+const publicResponse = ({ text, blocks }) => ({
   response_type: 'in_channel',
   text,
+  blocks: blocks && JSON.stringify(blocks),
 })
 
-const privateResponse = ({ text }) => ({
+const privateResponse = ({ text, blocks }) => ({
   response_type: 'ephemeral',
   text,
+  blocks: blocks && JSON.stringify(blocks),
 })
 
 const errorResponse = ({ error }) => ({
