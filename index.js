@@ -2,9 +2,11 @@
 require('dotenv').config()
 const express = require('express')
 const request = require('request')
-const redis = require('redis')
 
+const polls = require('./src/polls')
+const slackResponses = require('./src/slackResponses')
 const validateRequest = require('./src/validateRequest')
+const votes = require('./src/votes')
 
 // Store our app's ID and Secret. These we got from Step 1.
 // For this tutorial, we'll keep your API credentials right here. But for an actual app, you'll want to  store them securely in environment variables.
@@ -12,11 +14,6 @@ const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
 // Instantiates Express and assigns our app variable to it
-const store = redis.createClient()
-store.on('connect', () => {
-  console.log('store connected')
-})
-
 const app = express()
 
 app.use(
@@ -29,7 +26,7 @@ app.use(
 )
 
 // Again, we define a port we want to listen to
-const PORT = 4390
+const PORT = process.env.PORT || 4390
 
 // Lets start our server
 app.listen(PORT, () => {
@@ -75,36 +72,64 @@ app.get('/oauth', (req, res) => {
 })
 
 // Route the endpoint that our slash command will point to and send back a simple response to indicate that ngrok is working
-app.post('/werewolf', validateRequest, (req, res) => {
+app.post('/werewolf', validateRequest, async (req, res) => {
   const { user_id: userId, channel_id: channelId, text } = req.body
 
   const splitText = text.split(' ')
   const command = splitText.shift()
-  const options = splitText.join(' ')
+  const optionsString = splitText.join(' ')
 
   let message = {}
+  let result = {}
   switch (command) {
     case 'poll':
+      result = await polls.create({ channelId, optionsString })
+
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.publicResponse({
+            blocks: polls.formatPollDisplay({ poll: result.results }),
+          })
       // create poll in channel
       break
     case 'results':
+      result = await polls.find({ channelId })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            blocks: polls.formatPollDisplay({ poll: result.results }),
+          })
       // format results and return
       break
     case 'vote':
-      // add a vote to a number
+      result = await votes.vote({ channelId, userId, optionsString })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            text: 'Your vote has been recorded!',
+          })
       break
     case 'unvote':
+      result = await votes.unvote({ channelId, userId })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            text: 'Your vote has been removed!',
+          })
       // remove my vote
       break
     case 'close':
+      result = await polls.close({ channelId })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.privateResponse({
+            blocks: polls.formatPollDisplay({ poll: result.results }),
+          })
       // delete poll
       break
     default:
-      message = {
-        response_type: 'ephemeral',
-        delete_original: 'true',
-        text: 'Error: Unknown Command',
-      }
+      message = slackResponses.errorResponse(new Error('Unknown command'))
   }
-  return res.status(200).json(message)
+
+  if (message) return res.status(200).json(message)
 })
