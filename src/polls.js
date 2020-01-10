@@ -83,6 +83,7 @@ const create = async ({ channelId, optionsString }) => {
   const saveResult = await pollData.savePoll({ channelId, data: poll })
 
   if (saveResult.error) {
+    console.log(saveResult.error)
     return safeReturn(new Error('Something went wrong saving poll'))
   }
 
@@ -99,6 +100,7 @@ const close = async ({ channelId }) => {
   const deleteResult = await pollData.deletePoll({ channelId })
 
   if (deleteResult.error) {
+    console.log(deleteResult.error)
     return safeReturn(new Error('There was an issue closing this poll'))
   }
 
