@@ -122,7 +122,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       result = await polls.close({ channelId })
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
-        : slackResponses.privateResponse({
+        : slackResponses.publicResponse({
             blocks: polls.formatPollDisplay({ poll: result.results }),
           })
       // delete poll
