@@ -32,6 +32,10 @@ const vote = async ({ channelId, userId, optionsString }) => {
   if (pollResults.error) {
     return pollResults
   }
+
+  if (optionsString === '') {
+    return safeReturn(new Error('Please provide a vote option'), null)
+  }
   const currentPoll = pollResults.results
   const newPoll = Object.assign(
     {},

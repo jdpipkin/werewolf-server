@@ -81,7 +81,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
 
   let message = {}
   let result = {}
-  switch (command) {
+  switch (command.toLowerCase()) {
     case 'poll':
       result = await polls.create({ channelId, optionsString })
 

@@ -1,10 +1,17 @@
-const fs = require('fs').promises
+const Redis = require('ioredis')
 const safeReturn = require('./../safeReturn')
+
+const redis = new Redis(process.env.REDIS_URL)
 
 const findPoll = async ({ channelId }) => {
   try {
-    const file = await fs.readFile(`./db/${channelId}.json`)
-    return safeReturn(null, JSON.parse(file))
+    const file = await redis.get(channelId)
+    if (file) {
+      return safeReturn(null, JSON.parse(file))
+    } else {
+      console.log('here')
+      throw new Error('No poll exists for this channel.')
+    }
   } catch (error) {
     console.error(error)
     return safeReturn(error)
@@ -13,7 +20,7 @@ const findPoll = async ({ channelId }) => {
 
 const savePoll = async ({ channelId, data }) => {
   try {
-    await fs.writeFile(`./db/${channelId}.json`, JSON.stringify(data))
+    await redis.set(channelId, JSON.stringify(data))
     return safeReturn(null, true)
   } catch (error) {
     console.error(error)
@@ -23,8 +30,8 @@ const savePoll = async ({ channelId, data }) => {
 
 const deletePoll = async ({ channelId }) => {
   try {
-    await fs.unlink(`./db/${channelId}.json`)
-    return safeReturn(null, true)
+    const result = await redis.del(channelId)
+    return safeReturn(null, result)
   } catch (error) {
     console.error(error)
     return safeReturn(error)
