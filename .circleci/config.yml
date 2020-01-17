@@ -1,9 +1,6 @@
 version: 2.1
 jobs:
   build:
-    branches:
-      only:
-        - master
     docker: 
       - image: circleci/node:12.14.1 # the primary container, where your job's commands are run
     steps:
@@ -25,11 +22,11 @@ jobs:
           name: test
           command: npm test
           
-  deploy:
+  deploy-test:
     machine:
         enabled: true
     environment:
-      HEROKU_APP: "sleepy-refuge-55486"
+      HEROKU_APP: "werewolf-server-test"
     steps:
       - checkout
       - run:
@@ -37,16 +34,38 @@ jobs:
           command: |
             git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master
 
+  deploy-prod:
+    machine:
+        enabled: true
+    environment:
+      HEROKU_APP: "werewolf-server"
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Heroku
+          command: |
+            git push https://heroku:$HEROKU_PROD_API_KEY@git.heroku.com/$HEROKU_APP.git master
+
+
 workflows:
   version: 2
-  build-and-deploy:
+  build-and-deploy-test:
     jobs:
       - build
-      - deploy:
+      - deploy-test:
           requires:
             - build
           filters:
             branches:
               only: master
-      
-      
+
+  build-and-deploy-prod:
+    jobs:
+      - build
+      - request-testing:
+          type: approval
+          requires:
+            - build
+      - deploy-prod:
+          requires:
+            - request-testing
