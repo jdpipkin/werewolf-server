@@ -25,9 +25,9 @@ const optionBlock = ({ option, optionKey }) => {
           type: 'mrkdwn',
           text: `<@${voter}>`,
         })),
-        option.votes.length && {
+        {
           type: 'plain_text',
-          text: option.votes.length,
+          text: `${option.votes.length} votes`,
         },
       ],
     })

@@ -53,7 +53,7 @@ describe('blockBuilder', () => {
             },
             {
               type: 'plain_text',
-              text: 2,
+              text: '2 votes',
             },
           ],
         },
