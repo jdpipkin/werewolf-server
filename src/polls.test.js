@@ -2,6 +2,8 @@ const poll = require('./polls')
 const pollData = require('./data/pollData')
 const blockBuilder = require('./blockBuilder')
 
+jest.mock('ioredis')
+
 describe('formatPoll', () => {
   it('should return a poll formatted into blocks', () => {
     // arrange
@@ -54,7 +56,7 @@ describe('formatPoll', () => {
 
 describe('createPoll', () => {
   afterEach(() => {
-    jest.restoreAllMocks()
+    jest.resetAllMocks()
   })
 
   it('should should return a poll object if all went well', async () => {

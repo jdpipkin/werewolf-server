@@ -2,6 +2,8 @@ const pollsData = require('./data/pollData')
 const polls = require('./polls')
 const votes = require('./votes')
 
+jest.mock('ioredis')
+
 describe('vote', () => {
   let mockPoll
   beforeEach(() => {
