@@ -33,12 +33,24 @@ const _parseOptions = ({ optionsString }) => {
   return safeReturn(null, { title, options })
 }
 
-const formatPollDisplay = ({ poll }) => {
+const obfuscateVotes = ({ option }) => ({
+  ...option,
+  votes: option.votes.map(() => 'anon'),
+})
+
+const formatPollDisplay = ({ poll, userId }) => {
+  const { title, anonymous, options, creatorId } = poll
   return [
-    blockBuilder.titleBlock({ title: poll.title }),
+    blockBuilder.titleBlock({ title: title }),
     blockBuilder.divider(),
-    ...Object.keys(poll.options).flatMap(optionKey =>
-      blockBuilder.optionBlock({ option: poll.options[optionKey], optionKey })
+    ...Object.keys(options).flatMap(optionKey =>
+      blockBuilder.optionBlock({
+        option:
+          anonymous && creatorId !== userId
+            ? obfuscateVotes({ option: poll.options[optionKey] })
+            : poll.options[optionKey],
+        optionKey,
+      })
     ),
   ]
 }
@@ -48,16 +60,16 @@ const find = async ({ channelId }) => {
     return safeReturn(new Error('channelId is required'))
   }
 
-  const pollResult = await pollData.findPoll({ channelId })
+  const { error, results } = await pollData.findPoll({ channelId })
 
-  if (pollResult.error !== null) {
+  if (error !== null) {
     return safeReturn(new Error('No poll exists for this channel.'))
   }
 
-  return safeReturn(null, pollResult.results)
+  return safeReturn(null, { ...results, results })
 }
 
-const create = async ({ channelId, optionsString }) => {
+const create = async ({ channelId, optionsString, creatorId, anonymous }) => {
   if (!channelId) {
     return safeReturn(new Error('channelId is required'))
   }
@@ -77,6 +89,8 @@ const create = async ({ channelId, optionsString }) => {
 
   const poll = {
     channelId,
+    creatorId,
+    anonymous: anonymous || false,
     title,
     options: _createOptionsObject({ options }),
   }
