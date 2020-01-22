@@ -1,6 +1,7 @@
 const poll = require('./polls')
 const pollData = require('./data/pollData')
 const blockBuilder = require('./blockBuilder')
+
 describe('formatPoll', () => {
   it('should return a poll formatted into blocks', () => {
     // arrange
