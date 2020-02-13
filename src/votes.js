@@ -41,7 +41,7 @@ const vote = async ({ channelId, userId, optionsString }) => {
     {},
     {
       ...currentPoll,
-      options: _removeAndInsertVote(
+      options: _insertVote(
         userId,
         parseInt(optionsString, 10),
         currentPoll.options

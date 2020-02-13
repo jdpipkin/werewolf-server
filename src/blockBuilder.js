@@ -7,7 +7,7 @@ const titleBlock = ({ title }) => ({
 })
 
 const optionBlock = ({ option, optionKey }) => {
-  return [
+  const block = [
     {
       type: 'section',
       text: {
@@ -15,7 +15,10 @@ const optionBlock = ({ option, optionKey }) => {
         text: `*${optionKey}* - ${option.text}`,
       },
     },
-    {
+  ]
+
+  if (option.votes.length) {
+    block.push({
       type: 'context',
       elements: [
         ...option.votes.map(voter => ({
@@ -24,13 +27,13 @@ const optionBlock = ({ option, optionKey }) => {
         })),
         {
           type: 'plain_text',
-          text: option.votes.length
-            ? `${option.votes.length} votes`
-            : 'No votes',
+          text: `${option.votes.length} votes`,
         },
       ],
-    },
-  ]
+    })
+  }
+
+  return block
 }
 
 const divider = () => ({ type: 'divider' })
