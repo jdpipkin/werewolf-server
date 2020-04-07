@@ -1,0 +1,184 @@
+[
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*Battle of Hogwarts*"
+    }
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*1* - Puja"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*2* - Alex"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*3* - George"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*4* - Curtis"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*5* - Emily"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*6* - Stephanie"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*7* - Mick"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*8* - Billy"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*9* - Ariana"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*10* - Ben"
+    }
+  },
+  {
+    "type": "context",
+    "elements": [
+      {
+        "type": "mrkdwn",
+        "text": "<@U8TKL21B6>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UF7QMQE0G>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UB1JBJGR3>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UCN11LJ1E>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UNG2WA41F>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UBHA8NXV2>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UKMLS8XG8>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UF8DUFNDR>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@U8TKJ9X1A>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UNN1GESQ4>"
+      },
+      {
+        "type": "mrkdwn",
+        "text": "<@UCNHU3CPM>"
+      },
+      {
+        "type": "plain_text",
+        "text": "11 votes"
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*11* - Laura"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*12* - Libby"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*13* - Eric"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*14* - Melissa"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*15* - Colin"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*16* - Becky"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "*17* - Pip"
+    }
+  }
+]

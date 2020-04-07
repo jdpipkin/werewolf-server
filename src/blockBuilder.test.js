@@ -45,11 +45,7 @@ describe('blockBuilder', () => {
           elements: [
             {
               type: 'mrkdwn',
-              text: `<@U1234>`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `<@U5678>`,
+              text: `<@U1234>, <@U5678>`,
             },
             {
               type: 'plain_text',

@@ -18,13 +18,14 @@ const optionBlock = ({ option, optionKey }) => {
   ]
 
   if (option.votes.length) {
+    const voterFormatted = option.votes.map(v => `<@${v}>`)
     block.push({
       type: 'context',
       elements: [
-        ...option.votes.map(voter => ({
+        {
           type: 'mrkdwn',
-          text: `<@${voter}>`,
-        })),
+          text: voterFormatted.join(', '),
+        },
         {
           type: 'plain_text',
           text: `${option.votes.length} votes`,
