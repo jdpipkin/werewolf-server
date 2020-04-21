@@ -108,6 +108,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
         : slackResponses.privateResponse({
             text: 'Your vote has been recorded!',
           })
+
       break
     case 'unvote':
       result = await votes.unvote({ channelId, userId })

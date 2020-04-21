@@ -5,7 +5,7 @@ const redis = new Redis(process.env.REDIS_URL)
 
 const findPoll = async ({ channelId }) => {
   try {
-    const file = await redis.get(channelId)
+    const file = await redis.hget(channelId, "poll")
     if (file) {
       return safeReturn(null, JSON.parse(file))
     } else {
@@ -20,7 +20,8 @@ const findPoll = async ({ channelId }) => {
 
 const savePoll = async ({ channelId, data }) => {
   try {
-    await redis.set(channelId, JSON.stringify(data))
+    await redis.hset(channelId, "poll", JSON.stringify(data))
+    await redis.hset(channelId, "timestamp", JSON.stringify(data))
     return safeReturn(null, true)
   } catch (error) {
     console.error(error)
