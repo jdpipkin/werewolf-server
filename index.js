@@ -73,15 +73,14 @@ app.get('/oauth', (req, res) => {
 
 // Route the endpoint that our slash command will point to and send back a simple response to indicate that ngrok is working
 app.post('/werewolf', validateRequest, async (req, res) => {
-  const { user_id: userId, channel_id: channelId, text } = req.body
-
-  const splitText = text.split(' ')
-  const command = splitText.shift()
+  const { user_id: userId, channel_id: channelId, text, command } = req.body
+  const splitText = text.replace(`${command} `, '').split(' ')
+  const pollCommand = splitText.shift()
   const optionsString = splitText.join(' ')
 
   let message = {}
   let result = {}
-  switch (command.toLowerCase()) {
+  switch (pollCommand.toLowerCase()) {
     case 'poll':
       result = await polls.create({ channelId, optionsString })
 
