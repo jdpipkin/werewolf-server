@@ -21,19 +21,19 @@
   },
   "homepage": "https://github.com/jdpipkin/werewolf-server#readme",
   "dependencies": {
-    "dotenv": "^8.2.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "ioredis": "^4.14.1",
+    "ioredis": "^4.27.9",
     "lodash": "^4.17.21",
-    "nodemon": "^2.0.2",
-    "ramda": "^0.26.1",
-    "request": "^2.88.0"
+    "nodemon": "^2.0.12",
+    "ramda": "^0.27.1",
+    "request": "^2.88.2"
   },
   "devDependencies": {
-    "eslint": "^6.7.2",
-    "eslint-config-prettier": "^6.7.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "jest": "^24.9.0",
-    "prettier": "^1.19.1"
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.1.0",
+    "prettier": "^2.3.2"
   }
 }

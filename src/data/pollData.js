@@ -9,7 +9,6 @@ const findPoll = async ({ channelId }) => {
     if (file) {
       return safeReturn(null, JSON.parse(file))
     } else {
-      console.log('here')
       throw new Error('No poll exists for this channel.')
     }
   } catch (error) {

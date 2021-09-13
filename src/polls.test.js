@@ -2,6 +2,8 @@ const poll = require('./polls')
 const pollData = require('./data/pollData')
 const blockBuilder = require('./blockBuilder')
 
+jest.mock('ioredis')
+
 describe('formatPoll', () => {
   it('should return a poll formatted into blocks', () => {
     // arrange
@@ -54,13 +56,15 @@ describe('formatPoll', () => {
 
 describe('createPoll', () => {
   afterEach(() => {
-    jest.restoreAllMocks()
+    jest.resetAllMocks()
   })
 
   it('should should return a poll object if all went well', async () => {
     // arrange
     const expected = {
+      anonymous: false,
       channelId: '12345',
+      creatorId: 12345,
       title: 'Test Poll',
       options: {
         1: {
@@ -87,7 +91,11 @@ describe('createPoll', () => {
     const optionsString = '“Test Poll” Option 1, Option 2'
 
     // act
-    const actual = await poll.create({ channelId: '12345', optionsString })
+    const actual = await poll.create({
+      channelId: '12345',
+      creatorId: 12345,
+      optionsString,
+    })
     // assert
     expect(actual.results).toEqual(expected)
   })

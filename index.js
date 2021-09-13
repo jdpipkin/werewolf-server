@@ -77,26 +77,43 @@ app.post('/werewolf', validateRequest, async (req, res) => {
   const splitText = text.replace(`${command} `, '').split(' ')
   const pollCommand = splitText.shift()
   const optionsString = splitText.join(' ')
-
   let message = {}
   let result = {}
   switch (pollCommand.toLowerCase()) {
     case 'poll':
-      result = await polls.create({ channelId, optionsString })
+      result = await polls.create({
+        channelId,
+        optionsString,
+        creatorId: userId,
+      })
 
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.publicResponse({
-            blocks: polls.formatPollDisplay({ poll: result.results }),
+            blocks: polls.formatPollDisplay({ poll: result.results, userId }),
+          })
+      // create poll in channel
+      break
+    case 'anonpoll':
+      result = await polls.create({
+        channelId,
+        optionsString,
+        creatorId: userId,
+        anonymous: true,
+      })
+      message = result.error
+        ? slackResponses.errorResponse({ error: result.error })
+        : slackResponses.publicResponse({
+            blocks: polls.formatPollDisplay({ poll: result.results, userId }),
           })
       // create poll in channel
       break
     case 'results':
-      result = await polls.find({ channelId })
+      result = await polls.find({ channelId, userId })
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.privateResponse({
-            blocks: polls.formatPollDisplay({ poll: result.results }),
+            blocks: polls.formatPollDisplay({ poll: result.results, userId }),
           })
       // format results and return
       break
@@ -118,7 +135,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
       // remove my vote
       break
     case 'close':
-      result = await polls.close({ channelId })
+      result = await polls.close({ channelId, userId })
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.publicResponse({
