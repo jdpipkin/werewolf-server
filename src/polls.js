@@ -16,7 +16,7 @@ const _parseOptions = ({ optionsString }) => {
     .replace(/[\u2018\u2019]/g, "'")
     .replace(/[\u201C\u201D]/g, '"')
     .split('"')
-    .filter(t => t !== '')
+    .filter((t) => t !== '')
 
   if (splitText.length !== 2) {
     return safeReturn(
@@ -28,7 +28,7 @@ const _parseOptions = ({ optionsString }) => {
 
   const title = splitText[0].trim()
 
-  const options = splitText[1].split(',').map(v => v.trim())
+  const options = splitText[1].split(',').map((v) => v.trim())
 
   return safeReturn(null, { title, options })
 }
@@ -43,7 +43,7 @@ const formatPollDisplay = ({ poll, userId }) => {
   return [
     blockBuilder.titleBlock({ title: title }),
     blockBuilder.divider(),
-    ...Object.keys(options).flatMap(optionKey =>
+    ...Object.keys(options).flatMap((optionKey) =>
       blockBuilder.optionBlock({
         option:
           anonymous && creatorId !== userId
