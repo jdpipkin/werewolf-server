@@ -7,7 +7,6 @@ const findPoll = async ({ channelId }) => {
   try {
     const file = await db.collection(POLL_COLLECTION).get(channelId)
     if (file) {
-      console.log(extractPollData(file))
       return safeReturn(null, extractPollData(file))
     } else {
       throw new Error('No poll exists for this channel.')
@@ -20,7 +19,6 @@ const findPoll = async ({ channelId }) => {
 
 const savePoll = async ({ channelId, data }) => {
   try {
-    console.log('Save Poll Data', data)
     await db.collection(POLL_COLLECTION).set(channelId, data)
     return safeReturn(null, true)
   } catch (error) {
