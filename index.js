@@ -79,6 +79,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
   const optionsString = splitText.join(' ')
   let message = {}
   let result = {}
+
   switch (pollCommand.toLowerCase()) {
     case 'poll':
       result = await polls.create({
@@ -86,7 +87,7 @@ app.post('/werewolf', validateRequest, async (req, res) => {
         optionsString,
         creatorId: userId,
       })
-
+      
       message = result.error
         ? slackResponses.errorResponse({ error: result.error })
         : slackResponses.publicResponse({

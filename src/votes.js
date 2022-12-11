@@ -9,7 +9,7 @@ const _removeCurrentVote = (userId, pollOptions) =>
       ...accum,
       [curr]: {
         ...pollOptions[curr],
-        votes: pollOptions[curr].votes.filter(v => v !== userId),
+        votes: pollOptions[curr].votes.filter((v) => v !== userId),
       },
     }
   }, {})
@@ -36,6 +36,7 @@ const vote = async ({ channelId, userId, optionsString }) => {
   if (optionsString === '') {
     return safeReturn(new Error('Please provide a vote option'), null)
   }
+
   const currentPoll = pollResults.results
   const newPoll = Object.assign(
     {},
